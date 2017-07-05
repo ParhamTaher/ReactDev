@@ -1,0 +1,51 @@
+// Avoid nesting
+{
+    users {
+        name:
+        company:
+        queue: [
+            {name, number},
+            {name, number}
+        ]
+    }
+}
+
+// Better Solution
+{
+    profile : {
+        uid1: {
+            email: "parham.taher@gmail.com",
+            businessName: "Parham Medical Centre"
+        },
+        uid2: { ... },
+        uid3: { ... }
+
+    },
+    queue: {
+        uid1: {
+            pid1: {
+                patientName: "Zosya",
+                patientNumber: "647-123-1234"
+            },
+            pid2: {
+                patientName: "Bob",
+                patientNumber: "905-111-2222"
+            }
+        },
+        uid2: { ... }
+    }
+}
+
+Boiler Plate for Class:
+----------------------
+import React, { Component } from 'react';
+
+class SignUp extends Component {
+    render() {
+        return (
+            <div />
+        );
+    }
+}
+
+export default SignUp;
