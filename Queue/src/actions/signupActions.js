@@ -12,7 +12,7 @@ const config = {
     messagingSenderId: '633994224151'
 };
 
-export function userSignupRequest(userData) {
+export function userSignupRequest(userData, callback) {
     if (!firebase.apps.length) {
         firebase.initializeApp(config);
     }
@@ -20,11 +20,13 @@ export function userSignupRequest(userData) {
         console.log('action working!');
         console.log(userData);
 
-        return firebase.auth().createUserWithEmailAndPassword(userData.email, userData.password)
-            .then(function() {
-                console.log('Account created successfully');
-            }).catch(function(error) {
-                console.log('Error creating account:', error.message);
+        firebase.auth().createUserWithEmailAndPassword(userData.email, userData.password)
+            .then(() => callback())
+            .catch(function(error) {
+                dispatch({
+                  type: USER_SIGNUP_REQUEST,
+                  payload: { msg: error.message }
+                });
             });
     };
 }

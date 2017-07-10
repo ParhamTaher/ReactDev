@@ -2,14 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 //import ReduxPromise from 'redux-promise';
 import reduxThunk from 'redux-thunk';
 
 import reducers from './reducers';
-import QueueIndex from './components/QueueIndex';
-import LoginForm from './components/Login';
-import SignUp from './components/SignUp';
+import QueueIndex from './containers/QueueIndex';
+import LoginForm from './containers/Login';
+import SignUp from './containers/SignUp';
+import Profile from './containers/Profile';
 
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 
@@ -18,9 +19,12 @@ ReactDOM.render(
   <Provider store={createStoreWithMiddleware(reducers)}>
     <BrowserRouter>
         <div>
-            <Route path="/" component={SignUp} />
-            <Route path="login" component={LoginForm} />
-            <Route path="signup" component={SignUp} />
+            <Switch>
+                <Route path="/login" component={LoginForm} />
+                <Route path="/signup" component={SignUp} />
+                <Route path="/profile" component={Profile} />
+                <Route path="/" component={QueueIndex} />
+            </Switch>
         </div>
     </BrowserRouter>
   </Provider>

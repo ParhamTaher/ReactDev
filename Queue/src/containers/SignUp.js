@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { userSignupRequest } from '../actions/signupActions';
+import { userSignupRequest } from '../actions/signUpActions';
+
 
 class SignUp extends Component {
     constructor(props) {
@@ -9,7 +10,7 @@ class SignUp extends Component {
             username: '',
             email: '',
             password: '',
-            passwordConfirmation: ''
+            passwordConfirmation: '',
         };
 
         this.onChange = this.onChange.bind(this);
@@ -21,11 +22,14 @@ class SignUp extends Component {
     }
 
     onSubmit(e) {
+        this.setState({ errors: '' });
         e.preventDefault();
         // Post user info to firebase
         console.log(this.state);
 
-        this.props.userSignupRequest(this.state);
+        this.props.userSignupRequest(this.state, () => {
+            this.props.history.push('/login');
+        });
     }
 
     render() {
@@ -67,7 +71,9 @@ class SignUp extends Component {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="passwordConfirmation" className="control-label">Confirm Password</label>
+                    <label htmlFor="passwordConfirmation" className="control-label">
+                        Confirm Password
+                    </label>
                     <input
                         value={this.state.passwordConfirmation}
                         onChange={this.onChange}
@@ -75,6 +81,9 @@ class SignUp extends Component {
                         name="passwordConfirmation"
                         className="form-control"
                     />
+                </div>
+                <div>
+                    {this.props.errorsSignUp && <span className="help-block">{this.props.errorsSignUp.msg}</span>}
                 </div>
 
                 <div className="form-group">
@@ -85,8 +94,16 @@ class SignUp extends Component {
     }
 }
 
+function mapStateToProps(state) {
+    return { errorsSignUp: state.errorsSignUp };
+}
+
 SignUp.propTypes = {
-    userSignupRequest: React.PropTypes.funcisRequired
+    userSignupRequest: React.PropTypes.func.isRequired
 };
 
-export default connect(null, { userSignupRequest })(SignUp);
+SignUp.contextTypes = {
+    router: React.PropTypes.object.isRequired
+};
+
+export default connect(mapStateToProps, { userSignupRequest })(SignUp);

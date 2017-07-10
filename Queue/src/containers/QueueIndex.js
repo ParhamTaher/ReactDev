@@ -1,10 +1,8 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
+import { fetchList } from '../actions/eventActions';
 //import { fetchList } from '../actions';
-
-import Header from '../components/common/Header';
 
 
 class QueueIndex extends Component {
@@ -24,7 +22,6 @@ class QueueIndex extends Component {
     render() {
         return (
             <div>
-            <Header />
               Queue Index
               {this.renderList()}
             </div>
@@ -36,4 +33,4 @@ function mapStateToProps(state) {
     return { patientList: state.patientList };
 }
 
-export default connect(mapStateToProps, actions)(QueueIndex);
+export default connect(mapStateToProps, { fetchList })(QueueIndex);
