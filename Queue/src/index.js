@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 //import ReduxPromise from 'redux-promise';
 import reduxThunk from 'redux-thunk';
+import createHistory from 'history/createBrowserHistory';
+import { routerMiddleware } from 'react-router-redux';
 
 import reducers from './reducers';
 import QueueIndex from './containers/QueueIndex';
@@ -12,20 +14,23 @@ import LoginForm from './containers/Login';
 import SignUp from './containers/SignUp';
 import Profile from './containers/Profile';
 
-const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
+import App from './containers/App';
+
+const history = createHistory();
+const createStoreWithMiddleware = applyMiddleware(reduxThunk, routerMiddleware(history))(createStore);
 
 
 ReactDOM.render(
   <Provider store={createStoreWithMiddleware(reducers)}>
     <BrowserRouter>
-        <div>
-            <Switch>
-                <Route path="/login" component={LoginForm} />
-                <Route path="/signup" component={SignUp} />
-                <Route path="/profile" component={Profile} />
-                <Route path="/" component={QueueIndex} />
-            </Switch>
-        </div>
+        <App />
     </BrowserRouter>
   </Provider>
 , document.querySelector('.container'));
+
+
+const mapStateToProps = (state) => {
+    return { authenticated: state.auth.authenticated };
+};
+
+export default connect(mapStateToProps)(App);

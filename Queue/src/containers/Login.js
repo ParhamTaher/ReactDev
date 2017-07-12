@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { userLoginRequest } from '../actions/authActions';
+import * as Actions from '../actions';
 
 class Login extends Component {
     constructor(props) {
@@ -20,10 +20,9 @@ class Login extends Component {
     onSubmit(e) {
         e.preventDefault();
         console.log(this.state);
-
-        this.props.userLoginRequest(this.state, () => {
-            this.props.history.push('/QueueIndex');
-        });
+        console.log(this.props.authenticated);
+        this.props.userLoginRequest(this.state);
+        console.log(this.props.authenticated);
     }
 
     render() {
@@ -54,9 +53,9 @@ class Login extends Component {
                 </div>
 
                 <div>
-                    {this.props.errorsLogin &&
+                    {this.props.authenticationError &&
                         <span className="help-block">
-                            {this.props.errorsLogin.msg}
+                            {this.props.authenticationError}
                             </span>
                     }
                 </div>
@@ -70,7 +69,10 @@ class Login extends Component {
 }
 
 function mapStateToProps(state) {
-    return { errorsLogin: state.errorsLogin };
+    return {
+        authenticationError: state.auth.error,
+        authenticated: state.auth.authenticated
+    };
 }
 
-export default connect(mapStateToProps, { userLoginRequest })(Login);
+export default connect(mapStateToProps, Actions)(Login);

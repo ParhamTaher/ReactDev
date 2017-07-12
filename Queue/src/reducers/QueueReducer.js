@@ -1,4 +1,4 @@
-import { FETCH_LIST } from '../actions/eventActions';
+import { FETCH_LIST } from '../actions';
 
 export default function (state = {}, action) {
     switch (action.type) {

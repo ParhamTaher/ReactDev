@@ -1,11 +1,10 @@
 import { combineReducers } from 'redux';
 import QueueReducer from './QueueReducer';
-import UserReducer from './UserReducer';
+import AuthReducer from './AuthReducer';
 
 const rootReducer = combineReducers({
+    auth: AuthReducer,
     patientList: QueueReducer,
-    errorsSignUp: UserReducer,
-    errorsLogin: UserReducer
 });
 
 export default rootReducer;

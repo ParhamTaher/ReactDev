@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { fetchList } from '../actions/eventActions';
+import Header from './Header';
 //import { fetchList } from '../actions';
 
 
@@ -22,8 +23,8 @@ class QueueIndex extends Component {
     render() {
         return (
             <div>
-              Queue Index
-              {this.renderList()}
+                <Header />
+                {this.renderList()}
             </div>
         );
     }

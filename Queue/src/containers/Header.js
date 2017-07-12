@@ -1,30 +1,55 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import * as Actions from '../actions';
 
 class Header extends React.Component {
-  render() {
-    return (
-      <nav className="navbar navbar-default">
-        <div className="container-fluid">
-          <div className="navbar-header">
-            <a href="/" className="navbar-brand">Business Name</a>
-          </div>
-           <ul className="nav navbar-nav navbar-right">
-             <li className="nav-item">
-               <a className="nav-link" href="/login">Login</a>
-             </li>
-             <li className="nav-item">
-               <a className="nav-link" href="/signup">Sign Up</a>
-             </li>
-           </ul>
-        </div>
-      </nav>
-    );
-  }
+    handleSignout() {
+        this.props.signOutUser();
+    }
+
+    renderAuthLinks() {
+        if (this.props.authenticated) {
+          return [
+            <li className="nav-item" key={1}>
+              <Link className="nav-link" to="/profile">My Profile</Link>
+            </li>,
+            <li className="nav-item" key={2}>
+              <a className="nav-link" href="#" onClick={() => this.handleSignout()}>Sign Out</a>
+            </li>
+          ]
+        } else {
+          return [
+            <li className="nav-item" key={1}>
+              <Link className="nav-link" to="/login">Login</Link>
+            </li>,
+            <li className="nav-item" key={2}>
+              <Link className="nav-link" to="/signup">Sign Up</Link>
+            </li>
+          ]
+        }
+    }
+
+    render() {
+        return (
+          <nav className="navbar navbar-default">
+            <div className="container-fluid">
+              <div className="navbar-header">
+                <a href="/" className="navbar-brand">Business Name</a>
+              </div>
+               <ul className="nav navbar-nav navbar-right">
+                    { this.renderAuthLinks() }
+               </ul>
+            </div>
+          </nav>
+        );
+    }
 }
 
 function mapStateToProps(state) {
-  return {}
+    return {
+        authenticated: state.auth.authenticated
+    };
 }
 
-export default connect(mapStateToProps)(Header);
+export default connect(mapStateToProps, Actions)(Header);

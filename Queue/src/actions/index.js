@@ -1,7 +1,8 @@
 import * as firebase from 'firebase';
-import { browserHistory } from 'react-router';
 
 export const USER_LOGIN_REQUEST = 'userLoginRequest';
+export const USER_SIGNUP_REQUEST = 'userSignupRequest';
+export const FETCH_LIST = 'fetch_list';
 
 export const SIGN_OUT_USER = 'SIGN_OUT_USER';
 export const AUTH_ERROR = 'AUTH_ERROR';
@@ -17,20 +18,54 @@ const config = {
     messagingSenderId: '633994224151'
 };
 
-export function userLoginRequest(userData, callback) {
+export function userLoginRequest(userData) {
     if (!firebase.apps.length) {
         firebase.initializeApp(config);
     }
     return dispatch => {
         firebase.auth().signInWithEmailAndPassword(userData.email, userData.password)
+            .then(response => {
+                dispatch(authUser());
+            })
+            .catch(error => {
+                dispatch(authError(error));
+            });
+    };
+}
+
+export function userSignupRequest(userData, callback) {
+    if (!firebase.apps.length) {
+        firebase.initializeApp(config);
+    }
+    return dispatch => {
+        console.log('action working!');
+        console.log(userData);
+
+        firebase.auth().createUserWithEmailAndPassword(userData.email, userData.password)
             .then(() => callback())
             .catch(function(error) {
                 dispatch({
-                  type: USER_LOGIN_REQUEST,
+                  type: USER_SIGNUP_REQUEST,
                   payload: { msg: error.message }
                 });
             });
     };
+}
+
+export function fetchList() {
+    if (!firebase.apps.length) {
+        firebase.initializeApp(config);
+    }
+    const dbRef = firebase.database().ref('/');
+
+    return dispatch => {
+    dbRef.on('value', snapshot => {
+      dispatch({
+        type: FETCH_LIST,
+        payload: snapshot.val()
+      });
+    });
+};
 }
 
 
