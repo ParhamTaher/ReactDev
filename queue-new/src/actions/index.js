@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 
-export const FETCH_LIST = 'fetch_list';
+export const REQUEST_LIST = 'request_list';
 
 // Initialize Firebase
 const config = {
@@ -11,6 +11,25 @@ const config = {
     storageBucket: 'queue-c5f89.appspot.com',
     messagingSenderId: '633994224151'
 };
+
+export function requestList(term = null) {
+    console.log('hello', term);
+    if (!firebase.apps.length) {
+        firebase.initializeApp(config);
+    }
+    const dbRef = firebase.database().ref('/queue');
+    return dispatch => {
+        dbRef.on('value', snapshot => {
+            dispatch({
+                type: REQUEST_LIST,
+                payload: { data: snapshot.val(), term: term}
+            });
+        });
+    };
+
+
+}
+
 
 const queue =  {
     cid1: {
@@ -23,7 +42,14 @@ const queue =  {
     }
 }
 
-export function fetchList() {
+export function showListResult(data) {
+    return {
+        type: 'SHOW_LIST',
+        payload: data
+    };
+}
+
+export function loadList() {
 
     if (!firebase.apps.length) {
         firebase.initializeApp(config);
@@ -32,11 +58,8 @@ export function fetchList() {
 
 
     return dispatch => {
-    dbRef.on('value', snapshot => {
-          dispatch({
-            type: FETCH_LIST,
-            payload: snapshot.val()
-          });
+        dbRef.on('value', snapshot => {
+            dispatch(showListResult(snapshot.val()));
         });
     };
 
