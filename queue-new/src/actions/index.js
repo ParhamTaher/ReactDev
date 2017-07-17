@@ -1,6 +1,8 @@
 import * as firebase from 'firebase';
 
 export const REQUEST_LIST = 'request_list';
+export const SIGN_IN_USER = 'sign_in_user';
+export const SIGN_OUT_USER = 'sign_out_user';
 
 // Initialize Firebase
 const config = {
@@ -26,6 +28,16 @@ export function requestList(term = null) {
             });
         });
     };
+}
 
+export function signInUser() {
+    return {
+        type: SIGN_IN_USER
+    };
+}
 
+export function signOutUser() {
+    return {
+        type: SIGN_OUT_USER
+    };
 }

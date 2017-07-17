@@ -1,12 +1,14 @@
 import { combineReducers } from 'redux';
-import QueueReducer from './QueueReducer';
+import authReducer from './authReducer';
+import queueReducer from './queueReducer';
 // Keep track of our current location, in the store
 import { routerReducer } from 'react-router-redux';
 import { reducer as FormReducer } from 'redux-form';
 
 const rootReducer = combineReducers({
+    auth: authReducer,
     form: FormReducer,
-    patientList: QueueReducer,
+    patientList: queueReducer,
     router: routerReducer
 });
 

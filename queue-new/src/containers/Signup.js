@@ -1,5 +1,7 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import * as Actions from '../actions';
 
 const validate = values => {
   const errors = {};
@@ -28,6 +30,7 @@ const validate = values => {
 class Signup extends React.Component {
   handleFormSubmit = (values) => {
     console.log(values);
+    this.props.signInUser(values);
   };
   // ternary conditional to check whether our fields have errors,
     // and if the field has been touched and has an error, we're
@@ -60,7 +63,7 @@ class Signup extends React.Component {
   }
 }
 
-export default reduxForm({
+export default connect(null, Actions)(reduxForm({
   form: 'signup',
   validate
-})(Signup);
+})(Signup));
