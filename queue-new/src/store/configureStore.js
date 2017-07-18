@@ -3,6 +3,7 @@ import rootReducer from '../reducers';
 import reduxThunk from 'redux-thunk';
 import createHistory from 'history/createBrowserHistory';
 import { routerMiddleware } from 'react-router-redux';
+import * as Actions from '../actions';
 
 export const history = createHistory();
 
@@ -23,6 +24,13 @@ export function configureStore(initialState) {
         store.replaceReducer(nextRootReducer);
     });
   }
+
+  // Since we're working with the store object directly,
+    // we don't need anything fancy like thunks or bindActionCreators to dispatch an object:
+     // we can just import it and dispatch it right there.
+
+  // Call verifyAuth() almost as soon as app boots so we can update the state accordingly.
+  store.dispatch(Actions.verifyAuth());
 
   return store;
 }

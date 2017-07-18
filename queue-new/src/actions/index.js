@@ -59,10 +59,31 @@ export function signInUser(credentials) {
 }
 
 export function signOutUser() {
-    return {
-        type: SIGN_OUT_USER
-    };
+    return function (dispatch) {
+        firebase.auth().signOut()
+            .then(() =>{
+                dispatch({
+                    type: SIGN_OUT_USER
+                })
+            });
+        }
 }
+
+// If user is signed in, Firebase.auth.onAuthStateChanged()
+    // will return a valid user object, and dispatch to authUser()
+        // action creator to update authenticated to true on state. Returns null otherwise
+export function verifyAuth() {
+    return function (dispatch) {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                dispatch(authUser());
+            } else {
+                dispatch(signOutUser());
+            }
+        });
+    }
+}
+
 
 // Dual-purpose action used for both signin and signup
 export function authUser() {
