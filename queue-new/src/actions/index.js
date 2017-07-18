@@ -1,8 +1,9 @@
 import * as firebase from 'firebase';
 
 export const REQUEST_LIST = 'request_list';
-export const SIGN_IN_USER = 'sign_in_user';
 export const SIGN_OUT_USER = 'sign_out_user';
+export const AUTH_ERROR = 'AUTH_ERROR';
+export const AUTH_USER = 'AUTH_USER';
 
 // Initialize Firebase
 const config = {
@@ -13,6 +14,8 @@ const config = {
     storageBucket: 'queue-c5f89.appspot.com',
     messagingSenderId: '633994224151'
 };
+
+firebase.initializeApp(config);
 
 export function requestList(term = null) {
     console.log('Search Term: ', term);
@@ -30,14 +33,47 @@ export function requestList(term = null) {
     };
 }
 
-export function signInUser() {
-    return {
-        type: SIGN_IN_USER
-    };
+export function signUpUser(credentials) {
+    return function(dispatch) {
+        firebase.auth().createUserWithEmailAndPassword(credentials.email, credentials.password)
+            .then(response => {
+                dispatch(authUser());
+            })
+            .catch(error => {
+                console.log(error);
+                dispatch(authError(error));
+            });
+    }
+}
+
+export function signInUser(credentials) {
+    return function(dispatch) {
+        firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password)
+            .then(response => {
+                dispatch(authUser());
+            })
+            .catch(error => {
+                dispatch(authError(error));
+            });
+    }
 }
 
 export function signOutUser() {
     return {
         type: SIGN_OUT_USER
     };
+}
+
+// Dual-purpose action used for both signin and signup
+export function authUser() {
+    return {
+        type: AUTH_USER
+    }
+}
+
+export function authError(error) {
+    return {
+        type: AUTH_ERROR,
+        payload: error
+    }
 }

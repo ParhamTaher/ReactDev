@@ -35,6 +35,14 @@ class Login extends React.Component {
         </fieldset>
     );
 
+    renderAuthenticationError() {
+        if (this.props.authenticationError) {
+            return <div className="alert alert-danger">{ this.props.authenticationError }</div>;
+        } else {
+            return <div></div>;
+        }
+    }
+
   // handleSubmit() is a redux-form method, made available via this.props by reduxForm()(),
     // that we can attach to the form's onSubmit event handler.
   render() {
@@ -42,6 +50,9 @@ class Login extends React.Component {
       <div className="container">
         <div className="col-md-6 col-md-offset-3">
           <h2 className="text-center">Log In</h2>
+
+          { this.renderAuthenticationError() }
+
           <form onSubmit={this.props.handleSubmit(this.handleFormSubmit)}>
             <Field name="email" component={this.renderField} className="form-control" type="text" label="Email"/>
             <Field name="password" component={this.renderField} className="form-control" type="password" label="Password"/>
@@ -53,11 +64,17 @@ class Login extends React.Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    authenticationError: state.auth.error
+  }
+}
+
 // bindActionCreators actually only needs to be used when you're passing action creators down as props from
     // a container to a component that's not aware of Redux.
 
 // passed to FormReducer
-export default connect(null, Actions)(reduxForm({
+export default connect(mapStateToProps, Actions)(reduxForm({
   form: 'login',
   validate
 })(Login));

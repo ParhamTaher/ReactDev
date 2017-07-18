@@ -30,12 +30,12 @@ const validate = values => {
 class Signup extends React.Component {
   handleFormSubmit = (values) => {
     console.log(values);
-    this.props.signInUser(values);
+    this.props.signUpUser(values);
   };
-  // ternary conditional to check whether our fields have errors,
+    // ternary conditional to check whether our fields have errors,
     // and if the field has been touched and has an error, we're
         // adding the Bootstrap class of has-error on our fieldset
-  renderField = ({ input, label, type, meta: { touched, error } }) => (
+    renderField = ({ input, label, type, meta: { touched, error } }) => (
     <fieldset className={`form-group ${touched && error ? 'has-error' : ''}`}>
       <label className="control-label">{label}</label>
       <div>
@@ -43,13 +43,24 @@ class Signup extends React.Component {
         {touched && error && <div className="help-block">{error}</div>}
       </div>
     </fieldset>
-  );
+    );
+
+    renderAuthenticationError() {
+        if (this.props.authenticationError) {
+            return <div className="alert alert-danger">{ this.props.authenticationError }</div>;
+        } else {
+            return <div></div>;
+        }
+    }
 
   render() {
     return (
       <div className="container">
         <div className="col-md-6 col-md-offset-3">
           <h2 className="text-center">Sign Up</h2>
+
+          { this.renderAuthenticationError() }
+
           <form onSubmit={this.props.handleSubmit(this.handleFormSubmit)}>
             <Field name="email" type="text" component={this.renderField} label="Email" />
             <Field name="password" type="password" component={this.renderField} label="Password" />
@@ -63,7 +74,13 @@ class Signup extends React.Component {
   }
 }
 
-export default connect(null, Actions)(reduxForm({
+function mapStateToProps(state) {
+  return {
+    authenticationError: state.auth.error
+  }
+}
+
+export default connect(mapStateToProps, Actions)(reduxForm({
   form: 'signup',
   validate
 })(Signup));
