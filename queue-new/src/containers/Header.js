@@ -1,13 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 // By replacing our <a> tags with <Link>, we let react-router-dom know
     // it should just swap out the component passed into App instead of refreshing the page.
 import { Link } from 'react-router-dom';
 import * as Actions from '../actions';
 
 class Header extends React.Component {
+
+    componentWillMount() {
+        this.props.actions.getBusinessName();
+    }
+
     handleSignout() {
-        this.props.signOutUser();
+        this.props.actions.signOutUser();
     }
 
     renderAuthLinks() {
@@ -38,10 +44,11 @@ class Header extends React.Component {
           <nav className="navbar navbar-default">
             <div className="container-fluid">
               <div className="navbar-header">
-                <Link className="navbar-brand" to="/home">Business Name</Link>
+                <Link className="navbar-brand" to="/home">{this.props.businessName}</Link>
               </div>
                <ul className="nav navbar-nav navbar-right">
                     { this.renderAuthLinks() }
+                    { console.log('eyooo', this.props.businessName) }
                </ul>
             </div>
           </nav>
@@ -51,8 +58,15 @@ class Header extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        authenticated: state.auth.authenticated
+        authenticated: state.auth.authenticated,
+        businessName: state.bName.businessName
     };
 }
 
-export default connect(mapStateToProps, Actions)(Header);
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Actions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

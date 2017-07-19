@@ -48,7 +48,7 @@ class App extends React.Component {
                         <PublicRoute authenticated={ this.props.authenticated }  path="/signup" component={ Signup } />
                         <PublicRoute authenticated={ this.props.authenticated }  path="/login" component={ Login } />
                         <PrivateRoute authenticated={ this.props.authenticated }  path="/home" component={ Home } />
-                        <PrivateRoute authenticated={ this.props.authenticated } path="/favorites" component={ Profile } />
+                        <PrivateRoute authenticated={ this.props.authenticated } path="/profile" component={ Profile } />
                     </div>
                 </div>
             </ConnectedRouter>

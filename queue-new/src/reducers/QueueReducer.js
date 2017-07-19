@@ -1,4 +1,4 @@
-import { REQUEST_LIST } from '../actions';
+import { REQUEST_LIST, REQUEST_BUSINESS_NAME } from '../actions';
 import _ from 'lodash';
 
 function refactorList(lst) {

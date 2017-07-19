@@ -1,9 +1,10 @@
 import * as firebase from 'firebase';
 
-export const REQUEST_LIST = 'request_list';
-export const SIGN_OUT_USER = 'sign_out_user';
+export const REQUEST_LIST = 'REQUEST_LIST';
+export const SIGN_OUT_USER = 'SIGN_OUT_USER';
 export const AUTH_ERROR = 'AUTH_ERROR';
 export const AUTH_USER = 'AUTH_USER';
+export const REQUEST_BUSINESS_NAME = 'REQUEST_BUSINESS_NAME'
 
 // Initialize Firebase
 const config = {
@@ -17,6 +18,7 @@ const config = {
 
 firebase.initializeApp(config);
 
+// Queue Data
 export function requestList(term = null) {
     console.log('Search Term: ', term);
     if (!firebase.apps.length) {
@@ -37,17 +39,21 @@ export function requestList(term = null) {
 export function addCustomer(credentials) {
     console.log('NAMEEE: ', credentials.name)
     const userUid = firebase.auth().currentUser.uid;
-    var newPostKey = firebase.database().ref(userUid).child('queue').push().key;
+    //var newPostKey = firebase.database().ref(userUid).child('queue').push().key;
     // console.log('Key: ', newPostKey);
-
+    /*
     var customerData = {
         [newPostKey]: {
                         cName: credentials.name,
                         cNumber: credentials.number
                     }
     };
+    */
 
-    return dispatch => firebase.database().ref(userUid).child('queue').update(customerData);
+    return dispatch => firebase.database().ref(userUid).child('queue').push({
+                            cName: credentials.name,
+                            cNumber: credentials.number
+                        });
 }
 
 export function removeCustomer(postID) {
@@ -56,6 +62,8 @@ export function removeCustomer(postID) {
     return dispatch => firebase.database().ref(userUid).child('queue/' + postID).remove();
 }
 
+
+// Auth Data
 export function signUpUser(credentials) {
     return function(dispatch) {
         firebase.auth().createUserWithEmailAndPassword(credentials.email, credentials.password)
@@ -120,4 +128,35 @@ export function authError(error) {
         type: AUTH_ERROR,
         payload: error
     }
+}
+
+// Profile Data
+export function getBusinessName() {
+
+    return function (dispatch) {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                const userUid = firebase.auth().currentUser.uid;
+                const dbRef = firebase.database().ref(userUid).child('profile');
+                dbRef.on('value', snapshot => {
+                    console.log('snapshot: ', snapshot.val());
+                    dispatch({
+                        type: REQUEST_BUSINESS_NAME,
+                        payload: snapshot.val()
+                    });
+                });
+            } else {
+                dispatch({
+                    type: REQUEST_BUSINESS_NAME,
+                    payload: 'Business Name'
+                });
+            }
+        });
+    }
+
+}
+
+export function updateBusinessName(newName) {
+    const userUid = firebase.auth().currentUser.uid;
+    return dispatch => firebase.database().ref(userUid).child('profile').update({businessName: newName});
 }
