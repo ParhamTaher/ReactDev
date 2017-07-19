@@ -22,7 +22,8 @@ export function requestList(term = null) {
     if (!firebase.apps.length) {
         firebase.initializeApp(config);
     }
-    const dbRef = firebase.database().ref('/queue');
+    const userUid = firebase.auth().currentUser.uid;
+    const dbRef = firebase.database().ref(userUid).child('queue');
     return dispatch => {
         dbRef.on('value', snapshot => {
             dispatch({
@@ -31,6 +32,22 @@ export function requestList(term = null) {
             });
         });
     };
+}
+
+export function addCustomer(credentials) {
+    console.log('NAMEEE: ', credentials.name)
+    const userUid = firebase.auth().currentUser.uid;
+    var newPostKey = firebase.database().ref(userUid).child('queue').push().key;
+    // console.log('Key: ', newPostKey);
+
+    var customerData = {
+        [newPostKey]: {
+                        cName: credentials.name,
+                        cNumber: credentials.number
+                    }
+    };
+
+    return dispatch => firebase.database().ref(userUid).child('queue').update(customerData);
 }
 
 export function signUpUser(credentials) {

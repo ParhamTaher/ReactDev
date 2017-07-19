@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as Actions from '../actions';
@@ -10,6 +11,11 @@ class Home extends Component {
     componentWillMount() {
         this.props.actions.requestList();
     }
+
+    handleFormSubmit = (values) => {
+        console.log('Form Info:', values);
+        this.props.actions.addCustomer(values);
+    };
 
     renderList() {
         return _.map(this.props.patientList, post => {
@@ -26,6 +32,11 @@ class Home extends Component {
             <div>
                 <SearchBar onTermChange={this.props.actions.requestList} />
                 {this.renderList()}
+                <form onSubmit={this.props.handleSubmit(this.handleFormSubmit)} className="form-inline">
+                    <Field name="name" component="input" className="form-control" type="text" label="Name" placeholder="Customer Name"/>
+                    <Field name="number" component="input" className="form-control" type="text" label="Number" placeholder="Customer Number"/>
+                    <button action="submit" className="btn btn-success">Add</button>
+                </form>
             </div>
         );
     }
@@ -42,4 +53,6 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({
+  form: 'add-customer',
+})(Home));
