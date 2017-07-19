@@ -22,8 +22,8 @@ class Profile extends React.Component {
     };
 
     handleFormSubmit = (values) => {
-      console.log('Login Info:', values);
-      //this.props.requestPasswordChange(values);
+      console.log('Change Pass Info:', values);
+      this.props.actions.requestPasswordChange(values);
     };
 
     renderField = ({ input, label, type, meta: { touched, error } }) => (
@@ -37,11 +37,11 @@ class Profile extends React.Component {
       );
 
     renderAuthenticationError() {
-          if (this.props.authenticationError) {
-              return <div className="alert alert-danger">{ this.props.authenticationError }</div>;
-          } else {
-              return <div></div>;
-          }
+        if (this.props.passChangeStatus) {
+            return <div className="alert alert-danger">{ this.props.passChangeStatus }</div>;
+        } else {
+            return <div></div>;
+        }
     }
 
     render() {
@@ -52,7 +52,7 @@ class Profile extends React.Component {
                 <button action="submit" className="btn-xs btn-primary" onClick={() => this.handleChangeTitleSubmit(this.refs.myInput.value)}>Save</button>
                 <h3> Change password </h3>
                 <form onSubmit={this.props.handleSubmit(this.handleFormSubmit)}>
-                    <Field name="email" component={this.renderField} className="form-control" type="text" label="Current Password"/>
+                    <Field name="currentPassword" component={this.renderField} className="form-control" type="text" label="Current Password"/>
                     <Field name="password" component={this.renderField} className="form-control" type="password" label="New Password"/>
                     <Field name="passwordConfirmation" component={this.renderField} className="form-control" type="password" label="Confirm New Password"/>
                     <button action="submit" className="btn btn-primary">Submit</button>
@@ -66,7 +66,8 @@ class Profile extends React.Component {
 }
 
 const mapStateToProps = state => ({
-	businessName: state.bName.businessName
+	businessName: state.bName.businessName,
+    passChangeStatus: state.changePass.message
 });
 
 function mapDispatchToProps(dispatch) {
