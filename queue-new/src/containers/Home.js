@@ -12,16 +12,24 @@ class Home extends Component {
         this.props.actions.requestList();
     }
 
-    handleFormSubmit = (values) => {
+    handleAddSubmit = (values) => {
         console.log('Form Info:', values);
         this.props.actions.addCustomer(values);
+    };
+
+    handleRemoveSubmit = (postID) => {
+        console.log('Remove ID:', postID);
+        this.props.actions.removeCustomer(postID);
     };
 
     renderList() {
         return _.map(this.props.patientList, post => {
             return (
               <li className="list-group-item" key={post.id}>
-                  {post.cName}
+                    <div>
+                        {post.cName + ' | ' + post.cNumber}
+                        <button action="submit" className="btn-xs btn-danger pull-right" onClick={() => this.handleRemoveSubmit(post.id)}>Remove</button>
+                    </div>
               </li>
             );
         });
@@ -32,7 +40,7 @@ class Home extends Component {
             <div>
                 <SearchBar onTermChange={this.props.actions.requestList} />
                 {this.renderList()}
-                <form onSubmit={this.props.handleSubmit(this.handleFormSubmit)} className="form-inline">
+                <form onSubmit={this.props.handleSubmit(this.handleAddSubmit)} className="form-inline">
                     <Field name="name" component="input" className="form-control" type="text" label="Name" placeholder="Customer Name"/>
                     <Field name="number" component="input" className="form-control" type="text" label="Number" placeholder="Customer Number"/>
                     <button action="submit" className="btn btn-success">Add</button>

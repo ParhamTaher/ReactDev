@@ -50,6 +50,12 @@ export function addCustomer(credentials) {
     return dispatch => firebase.database().ref(userUid).child('queue').update(customerData);
 }
 
+export function removeCustomer(postID) {
+    const userUid = firebase.auth().currentUser.uid;
+
+    return dispatch => firebase.database().ref(userUid).child('queue/' + postID).remove();
+}
+
 export function signUpUser(credentials) {
     return function(dispatch) {
         firebase.auth().createUserWithEmailAndPassword(credentials.email, credentials.password)
