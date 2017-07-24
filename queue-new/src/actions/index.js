@@ -2,6 +2,8 @@ import * as firebase from 'firebase';
 
 export const REQUEST_LIST = 'REQUEST_LIST';
 export const REQUEST_LIST_DATA = 'REQUEST_LIST_DATA';
+export const REQUEST_COMPLETED_LIST = 'REQUEST_COMPLETED_LIST';
+export const GET_AVG_WAIT_TIME = 'GET_AVG_WAIT_TIME';
 export const SIGN_OUT_USER = 'SIGN_OUT_USER';
 export const AUTH_ERROR = 'AUTH_ERROR';
 export const AUTH_USER = 'AUTH_USER';
@@ -88,6 +90,8 @@ export function removeCustomer(postID) {
 
 export function moveQueue(upNext, current, third) {
     const userUid = firebase.auth().currentUser.uid;
+    var d = new Date();
+
     // First
     if (!current) {
         // Move upNext to current
@@ -105,7 +109,14 @@ export function moveQueue(upNext, current, third) {
         }
     } else {
         return dispatch => {
-            firebase.database().ref(userUid).child('completedQueue').push(current).then(() => {
+            const newCurrent = {
+                id: current.id,
+                cName: current.cName,
+                cNumber: current.cNumber,
+                enterTime: current.enterTime,
+                exitTime: d.getHours() + ':' + d.getMinutes()
+            };
+            firebase.database().ref(userUid).child('completedQueue').push(newCurrent).then(() => {
                 firebase.database().ref(userUid).child('current').update(upNext).then(() => {
                     firebase.database().ref(userUid).child('queue/' + upNext.id).remove().then(() => {
                         firebase.database().ref(userUid).child('upNext').update(third)
@@ -128,6 +139,61 @@ export function moveQueue(upNext, current, third) {
         // upNext = new top of queue
 
     }
+}
+
+export function getAverageWaitTime(completedList) {
+    // Use completed queue if exists, and get average of (exit - enter times)
+    // get completed queue action?
+
+    if (completedList) {
+        var timeDiff = 0;
+        var listLength = completedList.length
+
+        for (var i=0; i < listLength; i++) {
+            var enterTimeSplit = completedList[i].enterTime.split(':');
+            var exitTimeSplit = completedList[i].exitTime.split(':');
+
+            console.log('getAVGWATTIME 1: ', enterTimeSplit);
+            console.log('getAVGWATTIME 2: ', exitTimeSplit);
+            timeDiff += (((exitTimeSplit[0] - enterTimeSplit[0]) * 60) + exitTimeSplit[1] - enterTimeSplit[1]);
+        }
+        var avgTimeDiff = timeDiff/listLength;
+        var hours = Math.floor(avgTimeDiff / 60);
+        var minutes = avgTimeDiff % 60;
+
+        return dispatch => {
+            dispatch({
+                type: GET_AVG_WAIT_TIME,
+                payload: { data: hours + ' hours and ' + minutes + ' minute(s)', numCustomersSeen: listLength + 1 }
+            });
+        }
+
+    } else {
+        return dispatch => {
+            dispatch({
+                type: GET_AVG_WAIT_TIME,
+                payload: { data: '0 hours and 0 minute(s)', numCustomersSeen: 0 }
+            });
+        }
+    }
+}
+
+export function requestCompletedList() {
+    if (!firebase.apps.length) {
+        firebase.initializeApp(config);
+    }
+    const userUid = firebase.auth().currentUser.uid;
+    const dbRef = firebase.database().ref(userUid).child('completedQueue');
+
+    return dispatch => {
+        dbRef.on('value', snapshot => {
+            console.log('SNAPSHOT!!!: ', snapshot.val());
+            dispatch({
+                type: REQUEST_COMPLETED_LIST,
+                payload: snapshot.val()
+            });
+        });
+    };
 }
 
 

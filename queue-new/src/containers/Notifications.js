@@ -7,6 +7,7 @@ import * as Actions from '../actions';
 class Notifications extends Component {
     componentWillMount() {
         this.props.actions.requestListData();
+        this.props.actions.requestCompletedList();
     }
 
     getNextUp(nextObj) {
@@ -42,18 +43,19 @@ class Notifications extends Component {
     }
 
     handleVisitSubmit() {
+
         this.props.actions.moveQueue(this.props.patientListData.upNext, this.props.patientListData.current, this.props.patientListData.data[0]);
-        console.log('Handeled!');
+        //this.props.actions.getAverageWaitTime(this.props.completedList);
+        console.log('Handeled!: ', this.props.completedList.data);
     }
 
     render() {
         return (
             <div>
-                {console.log('notif data: ', this.props.patientListData.data)}
                 <div> Up Next: {this.getNextUp(this.props.patientListData.upNext)} </div>
                 <div> <span> Current Customer: {this.getCurrent(this.props.patientListData.current)} </span> { this.generateButton() } </div>
-                <div> Average Wait Time: N/A </div>
-                <div> Number of Customers Seen Today: 0 </div>
+                <div> Average Wait Time: {this.props.completedList.avgWaitTime} </div>
+                <div> Number of Customers Seen Today: {this.props.completedList.numCustSeen} </div>
             </div>
         );
     }
@@ -61,7 +63,9 @@ class Notifications extends Component {
 
 
 const mapStateToProps = state => ({
-    patientListData: state.patientListData
+    patientListData: state.patientListData,
+    completedList: state.completedList,
+    //avgWaitTime: state.avgWaitTime
 });
 
 function mapDispatchToProps(dispatch) {
