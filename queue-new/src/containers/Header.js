@@ -48,7 +48,6 @@ class Header extends React.Component {
               </div>
                <ul className="nav navbar-nav navbar-right">
                     { this.renderAuthLinks() }
-                    { console.log('eyooo', this.props.businessName) }
                </ul>
             </div>
           </nav>

@@ -38,7 +38,7 @@ class Profile extends React.Component {
 
     renderAuthenticationError() {
         if (this.props.passChangeStatus) {
-            return <div className="alert alert-danger">{ this.props.passChangeStatus }</div>;
+            return <div>{ this.props.passChangeStatus }</div>;
         } else {
             return <div></div>;
         }
@@ -52,7 +52,6 @@ class Profile extends React.Component {
                 <button action="submit" className="btn-xs btn-primary" onClick={() => this.handleChangeTitleSubmit(this.refs.myInput.value)}>Save</button>
                 <h3> Change password </h3>
                 <form onSubmit={this.props.handleSubmit(this.handleFormSubmit)}>
-                    <Field name="currentPassword" component={this.renderField} className="form-control" type="text" label="Current Password"/>
                     <Field name="password" component={this.renderField} className="form-control" type="password" label="New Password"/>
                     <Field name="passwordConfirmation" component={this.renderField} className="form-control" type="password" label="Confirm New Password"/>
                     <button action="submit" className="btn btn-primary">Submit</button>

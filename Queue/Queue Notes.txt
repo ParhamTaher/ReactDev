@@ -25,14 +25,29 @@
         uid1: {
             pid1: {
                 patientName: "Zosya",
-                patientNumber: "647-123-1234"
+                patientNumber: "647-123-1234",
+                checkInTime: 10:30AM,
+                checkOutTime: 11:30AM
             },
             pid2: {
                 patientName: "Bob",
-                patientNumber: "905-111-2222"
+                patientNumber: "905-111-2222",
+                checkInTime: 11:35AM,
+                checkOutTime: null
             }
         },
         uid2: { ... }
+    },
+    current: {
+        pid1: {
+            patientName: "Zosya",
+            patientNumber: "647-123-1234"
+    },
+    UpNext: {
+        pid2: {
+            patientName: "Bob",
+            patientNumber: "905-111-2222"
+        }
     }
 }
 

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as Actions from '../actions';
 import SearchBar from '../components/SearchBar';
+import Notifications from './Notifications';
 
 class Home extends Component {
 
@@ -23,11 +24,11 @@ class Home extends Component {
     };
 
     renderList() {
-        return _.map(this.props.patientList, post => {
+        return _.map(this.props.patientList.data, post => {
             return (
               <li className="list-group-item" key={post.id}>
                     <div>
-                        {post.cName + ' | ' + post.cNumber}
+                        {post.cName + ' | ' + post.cNumber + ' | ' + post.enterTime}
                         <button action="submit" className="btn-xs btn-danger pull-right" onClick={() => this.handleRemoveSubmit(post.id)}>Remove</button>
                     </div>
               </li>
@@ -37,14 +38,21 @@ class Home extends Component {
 
     render() {
         return (
-            <div>
-                <SearchBar onTermChange={this.props.actions.requestList} />
-                {this.renderList()}
-                <form onSubmit={this.props.handleSubmit(this.handleAddSubmit)} className="form-inline">
-                    <Field name="name" component="input" className="form-control" type="text" label="Name" placeholder="Customer Name"/>
-                    <Field name="number" component="input" className="form-control" type="text" label="Number" placeholder="Customer Number"/>
-                    <button action="submit" className="btn btn-success">Add</button>
-                </form>
+            <div className="container">
+                <div className="row">
+                    <div className="col-xs-6">
+                        <SearchBar onTermChange={this.props.actions.requestList} />
+                        {this.renderList()}
+                        <form onSubmit={this.props.handleSubmit(this.handleAddSubmit)} className="form-inline">
+                            <Field name="name" component="input" className="form-control" type="text" label="Name" placeholder="Customer Name"/>
+                            <Field name="number" component="input" className="form-control" type="text" label="Number" placeholder="Customer Number"/>
+                            <button action="submit" className="btn btn-success pull-right">Add</button>
+                        </form>
+                    </div>
+                    <div className="col-xs-6">
+                        <Notifications />
+                    </div>
+                </div>
             </div>
         );
     }

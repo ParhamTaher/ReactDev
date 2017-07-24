@@ -3,6 +3,7 @@ import authReducer from './authReducer';
 import queueReducer from './queueReducer';
 import businessNameReducer from './businessNameReducer';
 import changePassReducer from './changePassReducer';
+import notificationReducer from './notificationReducer';
 // Keep track of our current location, in the store
 import { routerReducer } from 'react-router-redux';
 import { reducer as FormReducer } from 'redux-form';
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
     changePass: changePassReducer,
     form: FormReducer,
     patientList: queueReducer,
+    patientListData: notificationReducer,
     router: routerReducer
 });
 
