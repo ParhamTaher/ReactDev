@@ -34,7 +34,7 @@ class Notifications extends Component {
         } else if (!(this.props.patientListData.current)) {
             return <button action="submit" className="btn-xs btn-primary" onClick={() => {
                           this.handleVisitSubmit()}
-                    }> Send first patient through </button>
+                    }> Send patient through </button>
         } else {
             return <button action="submit" className="btn-xs btn-primary" onClick={() => {
                         if (window.confirm('Are you sure you want to complete this customers visit?')) { this.handleVisitSubmit();}
@@ -45,7 +45,6 @@ class Notifications extends Component {
     handleVisitSubmit() {
 
         this.props.actions.moveQueue(this.props.patientListData.upNext, this.props.patientListData.current, this.props.patientListData.data[0]);
-        //this.props.actions.getAverageWaitTime(this.props.completedList);
         console.log('Handeled!: ', this.props.completedList.data);
     }
 
@@ -64,8 +63,7 @@ class Notifications extends Component {
 
 const mapStateToProps = state => ({
     patientListData: state.patientListData,
-    completedList: state.completedList,
-    //avgWaitTime: state.avgWaitTime
+    completedList: state.completedList
 });
 
 function mapDispatchToProps(dispatch) {

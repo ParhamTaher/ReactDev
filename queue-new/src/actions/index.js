@@ -74,10 +74,16 @@ export function addCustomer(credentials) {
     const userUid = firebase.auth().currentUser.uid;
 
     var d = new Date();
+    var datetime = d.getDate() + "/"
+                + (d.getMonth()+1)  + "/"
+                + d.getFullYear() + " "
+                + d.getHours() + ":"
+                + d.getMinutes() + ":"
+                + d.getSeconds();
     return dispatch => firebase.database().ref(userUid).child('queue').push({
                             cName: credentials.name,
                             cNumber: credentials.number,
-                            enterTime: d.getHours() + ':' + d.getMinutes(),
+                            enterTime: datetime,
                             exitTime: null
                         });
 }
@@ -90,7 +96,16 @@ export function removeCustomer(postID) {
 
 export function moveQueue(upNext, current, third) {
     const userUid = firebase.auth().currentUser.uid;
+
     var d = new Date();
+    var datetime = d.getDate() + "/"
+                + (d.getMonth()+1)  + "/"
+                + d.getFullYear() + " "
+                + d.getHours() + ":"
+                + d.getMinutes() + ":"
+                + d.getSeconds();
+
+    console.log('DATETIME: ', datetime);
 
     // First
     if (!current) {
@@ -101,7 +116,14 @@ export function moveQueue(upNext, current, third) {
     // Last
     } else if (!upNext) {
         return dispatch => {
-            firebase.database().ref(userUid).child('completedQueue').push(current).then(() => {
+            const newCurrent = {
+                id: current.id,
+                cName: current.cName,
+                cNumber: current.cNumber,
+                enterTime: current.enterTime,
+                exitTime: datetime
+            };
+            firebase.database().ref(userUid).child('completedQueue').push(newCurrent).then(() => {
                 firebase.database().ref(userUid).child('current').remove().then(() => {
                     firebase.database().ref(userUid).child('upNext').remove()
                 })
@@ -114,7 +136,7 @@ export function moveQueue(upNext, current, third) {
                 cName: current.cName,
                 cNumber: current.cNumber,
                 enterTime: current.enterTime,
-                exitTime: d.getHours() + ':' + d.getMinutes()
+                exitTime: datetime
             };
             firebase.database().ref(userUid).child('completedQueue').push(newCurrent).then(() => {
                 firebase.database().ref(userUid).child('current').update(upNext).then(() => {
@@ -122,57 +144,6 @@ export function moveQueue(upNext, current, third) {
                         firebase.database().ref(userUid).child('upNext').update(third)
                     })
                 })
-            });
-        }
-        // Remove upNext from top of queue
-        /*
-        return dispatch => {
-            firebase.database().ref(userUid).child('current').update(upNext);
-            console.log('id: ', upNext.id);
-            firebase.database().ref(userUid).child('queue/' + upNext.id).remove();
-        }
-        */
-
-
-        // Add current to completed queue
-        // current = upNext
-        // upNext = new top of queue
-
-    }
-}
-
-export function getAverageWaitTime(completedList) {
-    // Use completed queue if exists, and get average of (exit - enter times)
-    // get completed queue action?
-
-    if (completedList) {
-        var timeDiff = 0;
-        var listLength = completedList.length
-
-        for (var i=0; i < listLength; i++) {
-            var enterTimeSplit = completedList[i].enterTime.split(':');
-            var exitTimeSplit = completedList[i].exitTime.split(':');
-
-            console.log('getAVGWATTIME 1: ', enterTimeSplit);
-            console.log('getAVGWATTIME 2: ', exitTimeSplit);
-            timeDiff += (((exitTimeSplit[0] - enterTimeSplit[0]) * 60) + exitTimeSplit[1] - enterTimeSplit[1]);
-        }
-        var avgTimeDiff = timeDiff/listLength;
-        var hours = Math.floor(avgTimeDiff / 60);
-        var minutes = avgTimeDiff % 60;
-
-        return dispatch => {
-            dispatch({
-                type: GET_AVG_WAIT_TIME,
-                payload: { data: hours + ' hours and ' + minutes + ' minute(s)', numCustomersSeen: listLength + 1 }
-            });
-        }
-
-    } else {
-        return dispatch => {
-            dispatch({
-                type: GET_AVG_WAIT_TIME,
-                payload: { data: '0 hours and 0 minute(s)', numCustomersSeen: 0 }
             });
         }
     }
