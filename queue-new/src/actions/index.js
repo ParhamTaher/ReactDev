@@ -98,8 +98,7 @@ export function moveQueue(upNext, current, third) {
     const userUid = firebase.auth().currentUser.uid;
     /*
     if (upNext) {
-        var client = twilio('AC74dd9380c3d51dd3f44ca89a43761bf5', '408715d3d9230ae88e87288c5d031a55');
-
+        
         // Send the text message.
         client.sendMessage({
           to: upNext.cNumber,
