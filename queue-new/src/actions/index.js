@@ -96,6 +96,18 @@ export function removeCustomer(postID) {
 
 export function moveQueue(upNext, current, third) {
     const userUid = firebase.auth().currentUser.uid;
+    /*
+    if (upNext) {
+        var client = twilio('AC74dd9380c3d51dd3f44ca89a43761bf5', '408715d3d9230ae88e87288c5d031a55');
+
+        // Send the text message.
+        client.sendMessage({
+          to: upNext.cNumber,
+          from: '+1 289-814-2208 ',
+          body: 'Hello from Twilio and Parham!'
+        });
+    }
+    */
 
     var d = new Date();
     var datetime = d.getDate() + "/"
@@ -106,6 +118,7 @@ export function moveQueue(upNext, current, third) {
                 + d.getSeconds();
 
     console.log('DATETIME: ', datetime);
+
 
     // First
     if (!current) {
