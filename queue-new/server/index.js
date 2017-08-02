@@ -2,8 +2,8 @@ const express = require('express');
 const keys = require('./config/keys');
 var bodyParser = require('body-parser');
 
-var accountSid = keys.sIDTest;
-var authToken = keys.AuthTokenTest;
+var accountSid = keys.sID;
+var authToken = keys.AuthToken;
 
 var client = require('twilio')(accountSid, authToken);
 
@@ -22,18 +22,22 @@ app.post('/twilio/sendsms', function(req, res) {
                 '. You are next in line! You will be serviced in approximately ' +
                 req.body.avgWaitTime +
                 '.',
-            to: '6475016469',
-            from: keys.testNumber
+            to: req.body.upNext.cNumber,
+            from: keys.myNumber
         },
         function(err, sms) {
             if (err) {
                 console.log(err);
                 res.send({
+                    responseMSG: 'error',
                     message: 'There was an issue sending the text: ' + err
                 });
             } else {
                 console.log('it worked:', sms.sid, req.body.upNext.cName);
-                res.send({ message: 'it worked, sms sent: ' + sms.sid });
+                res.send({
+                    responseMSG: 'success',
+                    message: 'it worked, sms sent: ' + sms.sid
+                });
             }
         }
     );

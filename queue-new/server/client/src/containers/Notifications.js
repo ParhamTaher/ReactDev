@@ -12,7 +12,7 @@ class Notifications extends Component {
 
     getNextUp(upNext) {
         if (upNext) {
-            if (upNext.smsSent === false) {
+            if (!this.props.smsSentStatus.smsSent) {
                 console.log('NOTIF UP NEXT!: ', upNext);
                 this.props.actions.sendSMS(
                     upNext,
@@ -222,7 +222,8 @@ class Notifications extends Component {
 const mapStateToProps = state => ({
     patientListData: state.patientListData,
     completedList: state.completedList,
-    businessName: state.bName.businessName
+    businessName: state.bName.businessName,
+    smsSentStatus: state.smsSentStatus
 });
 
 function mapDispatchToProps(dispatch) {

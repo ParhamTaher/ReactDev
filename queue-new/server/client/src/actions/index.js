@@ -12,6 +12,8 @@ export const REQUEST_BUSINESS_NAME = 'REQUEST_BUSINESS_NAME';
 export const REQUEST_CHANGE_PASS = 'REQUEST_CHANGE_PASS';
 export const CHANGE_SUCCESS = 'CHANGE_SUCCESS';
 export const CHANGE_ERROR = 'CHANGE_ERROR';
+export const SET_SMS_SENT_TRUE = 'SET_SMS_SENT_TRUE';
+export const SET_SMS_SENT_FALSE = 'SET_SMS_SENT_FALSE';
 
 // Initialize Firebase
 const config = {
@@ -151,10 +153,25 @@ export function moveQueue(upNext, current, third) {
                                     .remove()
                                     .then(() => {
                                         if (third) {
-                                            dbRef.child('upNext').update(third);
+                                            dbRef
+                                                .child('upNext')
+                                                .update(third)
+                                                .then(() => {
+                                                    dispatch({
+                                                        type: SET_SMS_SENT_FALSE
+                                                    });
+                                                });
+                                        } else {
+                                            dispatch({
+                                                type: SET_SMS_SENT_FALSE
+                                            });
                                         }
                                     });
                             });
+                        });
+                    } else {
+                        dispatch({
+                            type: SET_SMS_SENT_FALSE
                         });
                     }
                 });
@@ -165,13 +182,26 @@ export function moveQueue(upNext, current, third) {
                 dbRef.child('upNext').remove().then(() => {
                     dbRef.child('queue/' + upNext.id).remove().then(() => {
                         if (third) {
-                            dbRef.child('upNext').update(third);
+                            dbRef.child('upNext').update(third).then(() => {
+                                dispatch({
+                                    type: SET_SMS_SENT_FALSE
+                                });
+                            });
+                        } else {
+                            dispatch({
+                                type: SET_SMS_SENT_FALSE
+                            });
                         }
                     });
                 });
             });
     } else if (third) {
-        return dispatch => dbRef.child('upNext').update(third);
+        return dispatch =>
+            dbRef.child('upNext').update(third).then(() => {
+                dispatch({
+                    type: SET_SMS_SENT_FALSE
+                });
+            });
     }
 }
 
@@ -208,22 +238,41 @@ export function sendSMS(upNext, avgWaitTime, businessName) {
     return dispatch => {
         axios
             .post('/twilio/sendsms', { upNext, avgWaitTime, businessName })
-            .then(res => {
-                const userUid = firebase.auth().currentUser.uid;
-
-                const dbRef = firebase.database().ref(userUid);
-
-                dbRef
-                    .child('queue/' + upNext.id + '/smsSent')
-                    .set(true)
-                    .then(() => {
-                        dbRef.child('upNext/smsSent').set(true);
+            .then(function(response) {
+                console.log(response.data.responseMSG);
+                if (response.data.responseMSG === 'success') {
+                    dispatch({
+                        type: SET_SMS_SENT_TRUE
                     });
-                console.log(
-                    'sendSMS FNC, SMS attempt sent!: ',
-                    res.data.message
-                );
+                } else {
+                    console.log('in else...');
+                    dispatch({
+                        type: SET_SMS_SENT_FALSE
+                    });
+                }
+            })
+            .catch(function(error) {
+                console.log(error);
+                dispatch({
+                    type: SET_SMS_SENT_FALSE
+                });
             });
+        /*
+            .then(res => {
+                console.log('res: ', res.responseMSG);
+                if (res.status === 'success') {
+                    console.log('res status: ', res.status);
+                    dispatch({
+                        type: SET_SMS_SENT_TRUE
+                    });
+                } else {
+                    console.log('in else...');
+                    dispatch({
+                        type: SET_SMS_SENT_FALSE
+                    });
+                }
+            });
+            */
     };
 }
 
