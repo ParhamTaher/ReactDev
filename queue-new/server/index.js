@@ -16,8 +16,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/twilio/sendsms', function(req, res) {
     client.messages.create(
         {
-            body: 'All in the game, yo',
-            to: req.body.cNumber,
+            body:
+                'Hey there, this is a message from ' +
+                req.body.businessName +
+                '. You are next in line! You will be serviced in approximately ' +
+                req.body.avgWaitTime +
+                '.',
+            to: '6475016469',
             from: keys.testNumber
         },
         function(err, sms) {
@@ -27,8 +32,8 @@ app.post('/twilio/sendsms', function(req, res) {
                     message: 'There was an issue sending the text: ' + err
                 });
             } else {
+                console.log('it worked:', sms.sid, req.body.upNext.cName);
                 res.send({ message: 'it worked, sms sent: ' + sms.sid });
-                console.log('it worked:', sms.sid);
             }
         }
     );

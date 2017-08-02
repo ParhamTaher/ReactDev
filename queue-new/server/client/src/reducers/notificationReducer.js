@@ -24,7 +24,6 @@ function refactorList(lst) {
 export default function(state = initialState, action) {
     switch (action.type) {
         case REQUEST_LIST_DATA:
-            console.log('INSIDE A REDUCER2');
             const refactorData = refactorList(action.payload.data);
             return {
                 data: refactorData,

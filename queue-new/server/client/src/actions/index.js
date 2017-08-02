@@ -1,4 +1,5 @@
 import * as firebase from 'firebase';
+import axios from 'axios';
 
 export const REQUEST_LIST = 'REQUEST_LIST';
 export const REQUEST_LIST_DATA = 'REQUEST_LIST_DATA';
@@ -65,7 +66,6 @@ export function requestListData() {
             newPayload.data = snapshot.child('queue').val();
             newPayload.upNext = snapshot.child('upNext').val();
             newPayload.current = snapshot.child('current').val();
-            console.log('inside action newPayLoadData: ', newPayload);
             dispatch({
                 type: REQUEST_LIST_DATA,
                 payload: newPayload
@@ -130,8 +130,6 @@ export function moveQueue(upNext, current, third) {
         ':' +
         d.getSeconds();
 
-    console.log('DATETIME: ', datetime);
-
     const dbRef = firebase.database().ref(userUid);
 
     if (current) {
@@ -167,7 +165,6 @@ export function moveQueue(upNext, current, third) {
                 dbRef.child('upNext').remove().then(() => {
                     dbRef.child('queue/' + upNext.id).remove().then(() => {
                         if (third) {
-                            console.log('Updating up Next!: ', third);
                             dbRef.child('upNext').update(third);
                         }
                     });
@@ -176,103 +173,6 @@ export function moveQueue(upNext, current, third) {
     } else if (third) {
         return dispatch => dbRef.child('upNext').update(third);
     }
-
-    /*
-
-    // First special
-    if (current === null && third === null) {
-        // Move upNext to current
-        return dispatch =>
-            firebase
-                .database()
-                .ref(userUid)
-                .child('current')
-                .update(upNext)
-                .then(() => {
-                    firebase
-                        .database()
-                        .ref(userUid)
-                        .child('queue/' + upNext.id)
-                        .remove();
-                });
-    } else if (current === null) {
-        return dispatch =>
-            firebase
-                .database()
-                .ref(userUid)
-                .child('current')
-                .update(upNext)
-                .then(() => {
-                    firebase
-                        .database()
-                        .ref(userUid)
-                        .child('queue/' + upNext.id)
-                        .remove()
-                        .then(() => {
-                            firebase
-                                .database()
-                                .ref(userUid)
-                                .child('upNext')
-                                .update(third);
-                        });
-                });
-        // Last
-    } else if (upNext === null && current) {
-        return dispatch => {
-            const newCurrent = {
-                id: current.id,
-                cName: current.cName,
-                cNumber: current.cNumber,
-                enterTime: current.enterTime,
-                exitTime: datetime
-            };
-            firebase
-                .database()
-                .ref(userUid)
-                .child('completedQueue')
-                .push(newCurrent)
-                .then(() => {
-                    firebase.database().ref(userUid).child('current').remove();
-                });
-        };
-    } else {
-        return dispatch => {
-            const newCurrent = {
-                id: current.id,
-                cName: current.cName,
-                cNumber: current.cNumber,
-                enterTime: current.enterTime,
-                exitTime: datetime
-            };
-            firebase
-                .database()
-                .ref(userUid)
-                .child('completedQueue')
-                .push(newCurrent)
-                .then(() => {
-                    firebase
-                        .database()
-                        .ref(userUid)
-                        .child('current')
-                        .update(upNext)
-                        .then(() => {
-                            firebase
-                                .database()
-                                .ref(userUid)
-                                .child('queue/' + upNext.id)
-                                .remove()
-                                .then(() => {
-                                    firebase
-                                        .database()
-                                        .ref(userUid)
-                                        .child('upNext')
-                                        .update(third);
-                                });
-                        });
-                });
-        };
-    }
-    */
 }
 
 export function requestCompletedList() {
@@ -284,7 +184,6 @@ export function requestCompletedList() {
 
     return dispatch => {
         dbRef.on('value', snapshot => {
-            console.log('SNAPSHOT!!!: ', snapshot.val());
             dispatch({
                 type: REQUEST_COMPLETED_LIST,
                 payload: snapshot.val()
@@ -292,7 +191,7 @@ export function requestCompletedList() {
         });
     };
 }
-
+/*
 export function updateSmsStatus(upNextID) {
     const userUid = firebase.auth().currentUser.uid;
 
@@ -302,6 +201,30 @@ export function updateSmsStatus(upNextID) {
         dbRef.child('queue/' + upNextID + '/smsSent').set(true).then(() => {
             dbRef.child('upNext/smsSent').set(true);
         });
+}
+*/
+
+export function sendSMS(upNext, avgWaitTime, businessName) {
+    return dispatch => {
+        axios
+            .post('/twilio/sendsms', { upNext, avgWaitTime, businessName })
+            .then(res => {
+                const userUid = firebase.auth().currentUser.uid;
+
+                const dbRef = firebase.database().ref(userUid);
+
+                dbRef
+                    .child('queue/' + upNext.id + '/smsSent')
+                    .set(true)
+                    .then(() => {
+                        dbRef.child('upNext/smsSent').set(true);
+                    });
+                console.log(
+                    'sendSMS FNC, SMS attempt sent!: ',
+                    res.data.message
+                );
+            });
+    };
 }
 
 // Auth Data
@@ -405,10 +328,6 @@ export function getBusinessName() {
                 const userUid = firebase.auth().currentUser.uid;
                 const dbRef = firebase.database().ref(userUid).child('profile');
                 dbRef.on('value', snapshot => {
-                    console.log(
-                        'Inside action, Business Name: ',
-                        snapshot.val()
-                    );
                     if (snapshot.val() == null) {
                         dispatch({
                             type: REQUEST_BUSINESS_NAME,

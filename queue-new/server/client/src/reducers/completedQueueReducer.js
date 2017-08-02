@@ -26,10 +26,12 @@ export default function(state = initialState, action) {
         case REQUEST_COMPLETED_LIST:
             if (action.payload != null) {
                 var refactorData = refactorList(action.payload);
+                /*
                 console.log(
                     'refacotred data in completed queue: ',
                     refactorData
                 );
+                */
 
                 var timeDiffMinutes = 0;
                 var listLength = refactorData.length;
@@ -45,12 +47,10 @@ export default function(state = initialState, action) {
                     var timeDiff =
                         Math.floor(dur.asHours()) +
                         moment.utc(ms).format(':mm:ss');
-                    console.log('TIMEDIFF!: ', timeDiff);
                     var timeDiffSplit = timeDiff.split(':');
                     timeDiffMinutes +=
                         parseInt(Math.ceil(timeDiffSplit[0]), 10) * 60 +
                         parseInt(Math.ceil(timeDiffSplit[1]), 10);
-                    console.log('TIMEDIFFMINUTES!: ', timeDiffMinutes);
                 }
                 var avgTimeDiff = timeDiffMinutes / listLength;
                 var hours = parseInt(Math.floor(avgTimeDiff / 60), 10);

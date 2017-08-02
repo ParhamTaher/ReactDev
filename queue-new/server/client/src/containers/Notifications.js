@@ -12,17 +12,30 @@ class Notifications extends Component {
 
     getNextUp(upNext) {
         if (upNext) {
-            console.log('NEXTTTTTTTTT!!T!T!', upNext);
-            if (upNext.smsSent !== true) {
-                this.sendSMS(upNext);
-                console.log('sending sms...');
+            if (upNext.smsSent === false) {
+                console.log('NOTIF UP NEXT!: ', upNext);
+                this.props.actions.sendSMS(
+                    upNext,
+                    this.props.completedList.avgWaitTime,
+                    this.props.businessName
+                );
             }
-
             return upNext.cName + ' | ' + upNext.cNumber;
         } else {
             return '';
         }
     }
+
+    /*
+    sendSMS(upNext, avgWaitTime, businessName) {
+        axios
+            .post('/twilio/sendsms', { upNext, avgWaitTime, businessName })
+            .then(res => {
+                console.log('SMS sent: ', res.data.message);
+                this.props.actions.updateSmsStatus(upNext.id);
+            });
+    }
+    */
 
     getCurrent(currentObj) {
         if (currentObj) {
@@ -30,13 +43,6 @@ class Notifications extends Component {
         } else {
             return 'No one currently being serviced!';
         }
-    }
-
-    sendSMS(upNext) {
-        axios.post('/twilio/sendsms', upNext).then(res => {
-            console.log('SMS sent: ', res.data.message);
-            this.props.actions.updateSmsStatus(upNext.id);
-        });
     }
 
     generateButton() {
@@ -107,13 +113,11 @@ class Notifications extends Component {
             nextUp = this.props.patientListData.upNext;
         }
 
-        console.log('NOTF upNext: ', this.props.patientListData.data[0]);
         this.props.actions.moveQueue(
             nextUp,
             this.props.patientListData.current,
             third
         );
-        console.log('Handeled!: ', this.props.completedList.data);
     }
 
     handleCSVSubmit() {
@@ -161,7 +165,7 @@ class Notifications extends Component {
                             <td>Up Next:</td>
                             <td>
                                 {this.getNextUp(
-                                    this.props.patientListData.data[0]
+                                    this.props.patientListData.upNext
                                 )}
                             </td>
                             <td />
@@ -217,7 +221,8 @@ class Notifications extends Component {
 
 const mapStateToProps = state => ({
     patientListData: state.patientListData,
-    completedList: state.completedList
+    completedList: state.completedList,
+    businessName: state.bName.businessName
 });
 
 function mapDispatchToProps(dispatch) {
