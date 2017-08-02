@@ -53,8 +53,8 @@ export default function(state = initialState, action) {
                     console.log('TIMEDIFFMINUTES!: ', timeDiffMinutes);
                 }
                 var avgTimeDiff = timeDiffMinutes / listLength;
-                var hours = Math.floor(avgTimeDiff / 60);
-                var minutes = avgTimeDiff % 60;
+                var hours = parseInt(Math.floor(avgTimeDiff / 60), 10);
+                var minutes = parseInt(avgTimeDiff % 60, 10);
 
                 return {
                     data: refactorData,
