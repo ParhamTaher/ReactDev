@@ -156,40 +156,61 @@ class Notifications extends Component {
     render() {
         return (
             <div>
-                <div>
-                    {' '}Up Next:{' '}
-                    {this.getNextUp(this.props.patientListData.data[0])}{' '}
-                </div>
-                <div>
-                    {' '}<span>
-                        {' '}Current Customer:{' '}
-                        {this.getCurrent(
-                            this.props.patientListData.current
-                        )}{' '}
-                    </span>{' '}
-                    {this.generateButton()}{' '}
-                </div>
-                <div>
-                    {' '}Average Wait Time:{' '}
-                    {this.props.completedList.avgWaitTime}{' '}
-                </div>
-                <div>
-                    {' '}Number of Customers Seen Today:{' '}
-                    {this.props.completedList.numCustSeen}{' '}
-                </div>
-                <div>
-                    <button
-                        action="submit"
-                        className="btn-xs btn-primary"
-                        onClick={() => {
-                            this.handleCSVSubmit({
-                                filename: 'CustomerList.csv'
-                            });
-                        }}
-                    >
-                        {' '}Export to CSV{' '}
-                    </button>
-                </div>
+                <table className="table">
+                    <tbody>
+                        <tr>
+                            <td>Up Next:</td>
+                            <td>
+                                {this.getNextUp(
+                                    this.props.patientListData.data[0]
+                                )}
+                            </td>
+                            <td />
+                        </tr>
+                        <tr>
+                            <td>Current Customer:</td>
+                            <td>
+                                {this.getCurrent(
+                                    this.props.patientListData.current
+                                )}
+                            </td>
+                            <td>
+                                {this.generateButton()}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Average Wait Time:</td>
+                            <td>
+                                {this.props.completedList.avgWaitTime}
+                            </td>
+                            <td />
+                        </tr>
+                        <tr>
+                            <td>Number of Customers Seen Today:</td>
+                            <td>
+                                {this.props.completedList.numCustSeen}
+                            </td>
+                            <td />
+                        </tr>
+                        <tr>
+                            <td />
+                            <td />
+                            <td>
+                                <button
+                                    action="submit"
+                                    className="btn-sm btn-primary"
+                                    onClick={() => {
+                                        this.handleCSVSubmit({
+                                            filename: 'CustomerList.csv'
+                                        });
+                                    }}
+                                >
+                                    {' '}Export to CSV{' '}
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         );
     }

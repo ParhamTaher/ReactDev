@@ -24,15 +24,24 @@ class Home extends Component {
     };
 
     renderList() {
+        var i = 0;
         return _.map(this.props.patientList.data, post => {
+            i += 1;
             return (
-                <li className="list-group-item" key={post.id}>
-                    <div>
-                        {post.cName +
-                            ' | ' +
-                            post.cNumber +
-                            ' | ' +
-                            post.enterTime}
+                <tr key={post.id}>
+                    <td>
+                        {i}
+                    </td>
+                    <td>
+                        {post.cName}
+                    </td>
+                    <td>
+                        {post.cNumber}
+                    </td>
+                    <td>
+                        {post.enterTime}
+                    </td>
+                    <td>
                         <button
                             action="submit"
                             className="btn-xs btn-danger pull-right"
@@ -40,8 +49,8 @@ class Home extends Component {
                         >
                             Remove
                         </button>
-                    </div>
-                </li>
+                    </td>
+                </tr>
             );
         });
     }
@@ -50,11 +59,15 @@ class Home extends Component {
         return (
             <div className="container">
                 <div className="row">
-                    <div className="col-xs-6">
+                    <div className="col-sm-6 col-sm-push-6">
+                        <h4>Information</h4>
+                        <Notifications />
+                    </div>
+                    <div className="col-sm-6 col-sm-pull-6">
+                        <h4>Customer Queue</h4>
                         <SearchBar
                             onTermChange={this.props.actions.requestList}
                         />
-                        {this.renderList()}
                         <form
                             onSubmit={this.props.handleSubmit(
                                 this.handleAddSubmit
@@ -84,9 +97,18 @@ class Home extends Component {
                                 Add
                             </button>
                         </form>
-                    </div>
-                    <div className="col-xs-6">
-                        <Notifications />
+                        <table className="table table-striped table-hover">
+                            <tbody>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Phone Number</th>
+                                    <th>Time Entered</th>
+                                    <th />
+                                </tr>
+                                {this.renderList()}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

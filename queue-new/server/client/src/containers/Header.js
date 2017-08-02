@@ -1,4 +1,6 @@
 import React from 'react';
+import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // By replacing our <a> tags with <Link>, we let react-router-dom know
@@ -19,51 +21,46 @@ class Header extends React.Component {
         // return an array of comma-separated <li>s, and React will just list them in order
         if (this.props.authenticated) {
             return [
-                <li className="nav-item" key={1}>
-                    <Link className="nav-link" to="/profile">
-                        My Profile
-                    </Link>
-                </li>,
-                <li className="nav-item" key={2}>
-                    <a
-                        className="nav-link"
-                        href="#"
-                        onClick={() => this.handleSignout()}
-                    >
-                        Sign Out
-                    </a>
-                </li>
+                <LinkContainer to="/profile" key={1}>
+                    <NavItem eventKey={1}>My Profile</NavItem>
+                </LinkContainer>,
+                <NavItem
+                    key={2}
+                    eventKey={2}
+                    onClick={() => this.handleSignout()}
+                >
+                    Sign Out
+                </NavItem>
             ];
         } else {
             return [
-                <li className="nav-item" key={1}>
-                    <Link className="nav-link" to="/login">
-                        Login
-                    </Link>
-                </li>,
-                <li className="nav-item" key={2}>
-                    <Link className="nav-link" to="/signup">
-                        Sign Up
-                    </Link>
-                </li>
+                <LinkContainer to="/login" key={1}>
+                    <NavItem eventKey={1}>Login</NavItem>
+                </LinkContainer>,
+                <LinkContainer to="/signup" key={2}>
+                    <NavItem eventKey={2}>Sign Up</NavItem>
+                </LinkContainer>
             ];
         }
     }
 
     render() {
         return (
-            <nav className="navbar navbar-default">
-                <div className="container-fluid">
-                    <div className="navbar-header">
+            <Navbar inverse collapseOnSelect>
+                <Navbar.Header>
+                    <Navbar.Brand>
                         <Link className="navbar-brand" to="/home">
                             {this.props.businessName}
                         </Link>
-                    </div>
-                    <ul className="nav navbar-nav navbar-right">
+                    </Navbar.Brand>
+                    <Navbar.Toggle />
+                </Navbar.Header>
+                <Navbar.Collapse>
+                    <Nav pullRight>
                         {this.renderAuthLinks()}
-                    </ul>
-                </div>
-            </nav>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
         );
     }
 }
@@ -81,4 +78,6 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps, null, {
+    pure: false
+})(Header);
