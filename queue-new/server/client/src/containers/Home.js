@@ -8,7 +8,7 @@ import SearchBar from '../components/SearchBar';
 import Notifications from './Notifications';
 
 class Home extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.actions.requestList();
     }
 

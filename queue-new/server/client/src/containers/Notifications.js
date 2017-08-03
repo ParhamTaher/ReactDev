@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as Actions from '../actions';
 
 class Notifications extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.actions.requestListData();
         this.props.actions.requestCompletedList();
     }
