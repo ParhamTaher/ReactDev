@@ -104,15 +104,17 @@ class Notifications extends Component {
         if (this.props.smsSentStatus.errorStatus === 'success') {
             return (
                 <td className="success">
-                    {this.props.smsSentStatus.msg}
+                    SMS Status: {this.props.smsSentStatus.msg}
+                </td>
+            );
+        } else if (this.props.smsSentStatus.errorStatus === 'error') {
+            return (
+                <td className="danger">
+                    SMS Status: {this.props.smsSentStatus.msg}
                 </td>
             );
         } else {
-            return (
-                <td className="danger">
-                    {this.props.smsSentStatus.msg}
-                </td>
-            );
+            return <td>SMS Status: None</td>;
         }
     }
 
@@ -183,7 +185,7 @@ class Notifications extends Component {
                                     this.props.patientListData.upNext
                                 )}
                             </td>
-                            <td />
+                            {this.generateSMSMessage()}
                         </tr>
                         <tr>
                             <td>Current Customer:</td>
@@ -195,7 +197,6 @@ class Notifications extends Component {
                             <td>
                                 {this.generateButton()}
                             </td>
-                            {this.generateSMSMessage()}
                         </tr>
                         <tr>
                             <td>Average Wait Time:</td>

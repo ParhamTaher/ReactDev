@@ -14,8 +14,10 @@ class Home extends Component {
 
     handleAddSubmit = values => {
         console.log('Form Info:', values);
-        this.props.actions.addCustomer(values);
-        this.props.dispatch(reset('add-customer'));
+        if (values.name && values.number) {
+            this.props.actions.addCustomer(values);
+            this.props.dispatch(reset('add-customer'));
+        }
     };
 
     handleRemoveSubmit = postID => {

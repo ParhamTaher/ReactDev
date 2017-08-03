@@ -2,8 +2,8 @@ const express = require('express');
 const keys = require('./config/keys');
 var bodyParser = require('body-parser');
 
-var accountSid = keys.sID;
-var authToken = keys.AuthToken;
+var accountSid = keys.sIDTest;
+var authToken = keys.AuthTokenTest;
 
 var client = require('twilio')(accountSid, authToken);
 
@@ -21,7 +21,7 @@ app.post('/twilio/sendsms', function(req, res) {
                 req.body.avgWaitTime +
                 '.',
             to: req.body.upNext.cNumber,
-            from: keys.myNumber
+            from: keys.testNumber
         })
         .then(function(data) {
             console.log('Message Sent');
@@ -42,6 +42,15 @@ app.post('/twilio/sendsms', function(req, res) {
 app.get('/', (req, res) => {
     res.send({ server: 'running' });
 });
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('client/build'));
+
+    const path = require('path');
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    });
+}
 
 // Heroku passes us runetime configurations
 const PORT = process.env.PORT || 5000;
