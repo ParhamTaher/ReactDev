@@ -7,15 +7,13 @@ var authToken = keys.AuthToken;
 
 var client = require('twilio')(accountSid, authToken);
 
-console.log(keys.sID);
-
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/twilio/sendsms', function(req, res) {
-    client.messages.create(
-        {
+    client.messages
+        .create({
             body:
                 'Hey there, this is a message from ' +
                 req.body.businessName +
@@ -24,23 +22,22 @@ app.post('/twilio/sendsms', function(req, res) {
                 '.',
             to: req.body.upNext.cNumber,
             from: keys.myNumber
-        },
-        function(err, sms) {
-            if (err) {
-                console.log(err);
-                res.send({
-                    responseMSG: 'error',
-                    message: 'There was an issue sending the text: ' + err
-                });
-            } else {
-                console.log('it worked:', sms.sid, req.body.upNext.cName);
-                res.send({
-                    responseMSG: 'success',
-                    message: 'it worked, sms sent: ' + sms.sid
-                });
-            }
-        }
-    );
+        })
+        .then(function(data) {
+            console.log('Message Sent');
+            res.send({
+                responseMSG: 'success',
+                message: 'it worked, sms sent'
+            });
+        })
+        .catch(function(err) {
+            console.error('Error sending message!!');
+            console.error(err);
+            res.send({
+                responseMSG: 'error',
+                message: 'Error sending message ' + err.message
+            });
+        });
 });
 app.get('/', (req, res) => {
     res.send({ server: 'running' });

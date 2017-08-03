@@ -100,6 +100,22 @@ class Notifications extends Component {
         }
     }
 
+    generateSMSMessage() {
+        if (this.props.smsSentStatus.errorStatus === 'success') {
+            return (
+                <td className="success">
+                    {this.props.smsSentStatus.msg}
+                </td>
+            );
+        } else {
+            return (
+                <td className="danger">
+                    {this.props.smsSentStatus.msg}
+                </td>
+            );
+        }
+    }
+
     handleVisitSubmit() {
         var third = null;
         var nextUp = null;
@@ -179,6 +195,7 @@ class Notifications extends Component {
                             <td>
                                 {this.generateButton()}
                             </td>
+                            {this.generateSMSMessage()}
                         </tr>
                         <tr>
                             <td>Average Wait Time:</td>

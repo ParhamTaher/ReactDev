@@ -14,6 +14,7 @@ export const CHANGE_SUCCESS = 'CHANGE_SUCCESS';
 export const CHANGE_ERROR = 'CHANGE_ERROR';
 export const SET_SMS_SENT_TRUE = 'SET_SMS_SENT_TRUE';
 export const SET_SMS_SENT_FALSE = 'SET_SMS_SENT_FALSE';
+export const SET_SMS_SENT_ERROR = 'SET_SMS_SENT_ERROR';
 
 // Initialize Firebase
 const config = {
@@ -221,58 +222,25 @@ export function requestCompletedList() {
         });
     };
 }
-/*
-export function updateSmsStatus(upNextID) {
-    const userUid = firebase.auth().currentUser.uid;
-
-    const dbRef = firebase.database().ref(userUid);
-
-    return dispatch =>
-        dbRef.child('queue/' + upNextID + '/smsSent').set(true).then(() => {
-            dbRef.child('upNext/smsSent').set(true);
-        });
-}
-*/
 
 export function sendSMS(upNext, avgWaitTime, businessName) {
     return dispatch => {
         axios
             .post('/twilio/sendsms', { upNext, avgWaitTime, businessName })
             .then(function(response) {
-                console.log(response.data.responseMSG);
+                console.log('response data in actions: ', response.data);
                 if (response.data.responseMSG === 'success') {
                     dispatch({
-                        type: SET_SMS_SENT_TRUE
+                        type: SET_SMS_SENT_TRUE,
+                        payload: response.data
                     });
                 } else {
-                    console.log('in else...');
                     dispatch({
-                        type: SET_SMS_SENT_FALSE
-                    });
-                }
-            })
-            .catch(function(error) {
-                console.log(error);
-                dispatch({
-                    type: SET_SMS_SENT_FALSE
-                });
-            });
-        /*
-            .then(res => {
-                console.log('res: ', res.responseMSG);
-                if (res.status === 'success') {
-                    console.log('res status: ', res.status);
-                    dispatch({
-                        type: SET_SMS_SENT_TRUE
-                    });
-                } else {
-                    console.log('in else...');
-                    dispatch({
-                        type: SET_SMS_SENT_FALSE
+                        type: SET_SMS_SENT_ERROR,
+                        payload: response.data
                     });
                 }
             });
-            */
     };
 }
 
