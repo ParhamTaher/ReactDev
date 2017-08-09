@@ -2,8 +2,8 @@ const express = require('express');
 const keys = require('./config/keys');
 var bodyParser = require('body-parser');
 
-var accountSid = keys.sIDTest;
-var authToken = keys.AuthTokenTest;
+var accountSid = keys.sID;
+var authToken = keys.AuthToken;
 
 var client = require('twilio')(accountSid, authToken);
 
@@ -21,7 +21,7 @@ app.post('/twilio/sendsms', function(req, res) {
                 req.body.avgWaitTime +
                 '.',
             to: req.body.upNext.cNumber,
-            from: keys.testNumber
+            from: keys.myNumber
         })
         .then(function(data) {
             console.log('Message Sent');
@@ -38,9 +38,6 @@ app.post('/twilio/sendsms', function(req, res) {
                 message: 'Error sending message ' + err.message
             });
         });
-});
-app.get('/', (req, res) => {
-    res.send({ server: 'running' });
 });
 
 if (process.env.NODE_ENV === 'production') {
